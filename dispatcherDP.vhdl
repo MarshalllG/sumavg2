@@ -6,9 +6,9 @@ package dispatcher_dp_pkg is
 component dispatcher_dp is
     generic (
         N_BITS                              : integer := 40;
-        W_BITS			            : integer := 32;
-        A_BITS 			            : integer := 12;
-        K_BITS			            : integer := 8
+        W_BITS                              : integer := 32;
+        A_BITS                              : integer := 12;
+        K_BITS                              : integer := 8
     );
     port (
             CLK, rst_n                      : in std_logic;
@@ -22,7 +22,7 @@ component dispatcher_dp is
             dev_len                         : out std_logic_vector(K_BITS-1 DOWNTO 0);
             -- control signals
             load_R_dataout                  : in std_logic;
-            sel_R_dataout		    : in std_logic;
+            sel_R_dataout                   : in std_logic;
             set_ma_din_addr                 : in std_logic;
             set_dev_ptr1                    : in std_logic;
             set_dev_ptr2                    : in std_logic;
@@ -30,7 +30,7 @@ component dispatcher_dp is
             set_output                      : in std_logic;
             -- status signals
             input_hi                        : out std_logic_vector(K_BITS-1 DOWNTO 0);	   
-	    ma_dout                         : in std_logic_vector(W_BITS-1 DOWNTO 0);
+            ma_dout                         : in std_logic_vector(W_BITS-1 DOWNTO 0);
             dev_result                      : in std_logic_vector(W_BITS-1 DOWNTO 0)
         );
 	end component;
@@ -46,10 +46,10 @@ use ieee.numeric_std.all;
 entity dispatcher_dp is
     generic (
                 N_BITS                      : integer := 40;
-		W_BITS			    : integer := 32;
-		A_BITS 			    : integer := 12;
-		K_BITS			    : integer := 8
-	);
+                W_BITS                      : integer := 32;
+                A_BITS                      : integer := 12;
+                K_BITS			              : integer := 8
+	 );
     port (
             CLK, rst_n                      : in std_logic;
             -- data inputs
@@ -62,7 +62,7 @@ entity dispatcher_dp is
             dev_len                         : out std_logic_vector(K_BITS-1 DOWNTO 0);
             -- control signals
             load_R_dataout                  : in std_logic;
-            sel_R_dataout		    : in std_logic;
+            sel_R_dataout                   : in std_logic;
             set_ma_din_addr                 : in std_logic;
             set_dev_ptr1                    : in std_logic;
             set_dev_ptr2                    : in std_logic;
@@ -70,7 +70,7 @@ entity dispatcher_dp is
             set_output                      : in std_logic;
             -- status signals
             input_hi                        : out std_logic_vector(K_BITS-1 DOWNTO 0);
-	    ma_dout                         : in std_logic_vector(W_BITS-1 DOWNTO 0);
+            ma_dout                         : in std_logic_vector(W_BITS-1 DOWNTO 0);
             dev_result                      : in std_logic_vector(W_BITS-1 DOWNTO 0)
         );
 end dispatcher_dp;
@@ -78,7 +78,7 @@ end dispatcher_dp;
 
 architecture s of dispatcher_dp is
     signal R_dataout, R_dataout_in          : std_logic_vector(N_BITS-1 DOWNTO 0);
-    signal input_lo			    : std_logic_vector(W_BITS-1 DOWNTO 0);
+    signal input_lo                         : std_logic_vector(W_BITS-1 DOWNTO 0);
 
 begin
    

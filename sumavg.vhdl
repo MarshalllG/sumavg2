@@ -78,8 +78,6 @@ architecture struct of sumavg is
    signal load_result                           : std_logic;
    signal sel_R_X                               : std_logic;
    signal sel_R_Y                               : std_logic;
-   signal sel_R_D1                                     : std_logic;
-   signal sel_R_D2                                     : std_logic;
    signal sel_R_acc                             : std_logic;
    signal sel_CNT                               : std_logic;
    signal set_mem_addr                          : std_logic;   
@@ -113,8 +111,6 @@ begin
       load_result => load_result,
       sel_R_X => sel_R_X,
       sel_R_Y => sel_R_Y,
-      sel_R_D1 => sel_R_D1,
-      sel_R_D2 => sel_R_D2,
       sel_R_acc => sel_R_acc,
       sel_CNT => sel_CNT,
       set_mem_addr => set_mem_addr, 
@@ -155,8 +151,6 @@ begin
       load_result => load_result,
       sel_R_X => sel_R_X,
       sel_R_Y => sel_R_Y,
-      sel_R_D1 => sel_R_D1,
-      sel_R_D2 => sel_R_D2,
       sel_R_acc => sel_R_acc,
       sel_CNT => sel_CNT,
       set_mem_addr => set_mem_addr, 

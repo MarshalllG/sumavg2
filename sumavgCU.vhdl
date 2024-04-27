@@ -26,8 +26,6 @@ component sumavg_ctrl is
       load_L                                    : out std_logic;
       sel_R_X                                   : out std_logic;
       sel_R_Y                                   : out std_logic;
-      sel_R_D1                                  : out std_logic;
-      sel_R_D2                                  : out std_logic;
       sel_R_acc                                 : out std_logic;
       sel_CNT                                   : out std_logic;
       set_mem_addr                              : out std_logic;  
@@ -80,8 +78,6 @@ entity sumavg_ctrl is
       load_L                                    : out std_logic;
       sel_R_X                                   : out std_logic;
       sel_R_Y                                   : out std_logic;
-      sel_R_D1                                  : out std_logic;
-      sel_R_D2                                  : out std_logic;
       sel_R_acc                                 : out std_logic;
       sel_CNT                                   : out std_logic;
       set_mem_addr                              : out std_logic;  
@@ -104,7 +100,7 @@ entity sumavg_ctrl is
 end sumavg_ctrl;
 
 architecture behav of sumavg_ctrl is
-	type statetype is (S_INIT, S_READ_1, S_FETCH_1, S_READ_2, S_FETCH_2, S_ACC_1, S_CHECK_OVERFLOW_1, S_ACC_2, S_CHECK_OVERFLOW_2, S_OVERFLOW, S_START_DIV, S_ERR_ZERO, S_WAIT_DIV, S_END_DIV);
+	type statetype is (S_INIT, S_READ_1, S_FETCH_1, S_READ_2, S_FETCH_2, S_ACC_1, S_CHECK_OVERFLOW_1, S_ACC_2, S_CHECK_OVERFLOW_2, S_OVERFLOW, S_DIV_START, S_ERR_ZERO, S_DIV_WAIT, S_DIV_END);
 	signal state, nextstate : statetype;
   
 begin
@@ -167,22 +163,22 @@ begin
             if overflow = '1' then
                nextstate <= S_OVERFLOW;
             elsif last_iteration = '1' then
-               nextstate <= S_START_DIV;
+               nextstate <= S_DIV_START;
             else
                nextstate <= S_READ_1;
             end if;
 
-         when S_START_DIV =>
-            nextstate <= S_WAIT_DIV;
+         when S_DIV_START =>
+            nextstate <= S_DIV_WAIT;
 
-         when S_WAIT_DIV => 
+         when S_DIV_WAIT => 
             if div_ready = '1' then
-               nextstate <= S_END_DIV;
+               nextstate <= S_DIV_END;
             else
-               nextstate <= S_WAIT_DIV;
+               nextstate <= S_DIV_WAIT;
             end if;
 
-         when S_END_DIV =>
+         when S_DIV_END =>
             nextstate <= S_INIT;
 
          if abort = '1' then
@@ -210,14 +206,12 @@ load_CNT                  <= '1'            when (state = S_INIT and start = '1'
 load_L                    <= '1'            when (state = S_INIT and start = '1') else '0';
 sel_R_X                   <= '1'            when (state = S_FETCH_1) else '0';
 sel_R_Y                   <= '1'            when (state = S_FETCH_2) else '0';
-sel_R_D1                  <= '1'            when (state = S_FETCH_1) else '0';
-sel_R_D2                  <= '1'            when (state = S_FETCH_2) else '0';
 sel_CNT                   <= '0'            when (state = S_INIT) else '1';
 sel_R_acc                 <= '0'            when (state = S_ACC_1) else '1';
-load_result               <= '1'            when (state = S_END_DIV) or (state = S_OVERFLOW) or (state = S_ERR_ZERO) else '0';
+load_result               <= '1'            when (state = S_DIV_END) or (state = S_OVERFLOW) or (state = S_ERR_ZERO) else '0';
 set_mem_addr              <= '1'            when (state = S_READ_1) or (state = S_READ_2) else '0';
 sel_mem_addr              <= '0'            when (state = S_READ_1) else '1';
-div_start                 <= '1'            when (state = S_START_DIV) else '0';
+div_start                 <= '1'            when (state = S_DIV_START) else '0';
 set_zero                  <= '1'            when (state = S_ERR_ZERO) else '0';
 div_abort                 <= '0';
 

@@ -33,8 +33,6 @@ component sumavg_dp is
       load_result                               : in std_logic;
       sel_R_X                                   : in std_logic;
       sel_R_Y                                   : in std_logic;
-      sel_R_D1                                  : in std_logic;
-      sel_R_D2                                  : in std_logic;
       sel_R_acc                                 : in std_logic;
       sel_CNT                                   : in std_logic;
       set_mem_addr                              : in std_logic;
@@ -89,8 +87,6 @@ entity sumavg_dp is
       load_result                               : in std_logic;
       sel_R_X                                   : in std_logic;
       sel_R_Y                                   : in std_logic;
-      sel_R_D1                                  : in std_logic;
-      sel_R_D2                                  : in std_logic;
       sel_R_acc                                 : in std_logic;
       sel_CNT                                   : in std_logic;
       set_mem_addr                              : in std_logic;
