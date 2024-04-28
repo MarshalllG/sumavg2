@@ -52,8 +52,6 @@ architecture rtl of toplevel is
    end component;
   
 ---------- signals ----------
-signal sig_RXD                      : std_logic;
-signal sig_TXD                      : std_logic;
 signal sig_abort                    : std_logic;
 signal sig_start                    : std_logic;
 signal sig_input                    : std_logic_vector(39 downto 0);
@@ -65,8 +63,8 @@ begin
    SER : serial_to_device 
       port map (
          CLK, rst_n,
-         RXD => sig_RXD,
-         TXD => sig_TXD,
+         RXD => RXD,
+         TXD => TXD,
          abort => sig_abort,
          start => sig_start,
          input => sig_input,

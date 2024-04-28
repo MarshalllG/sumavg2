@@ -103,6 +103,7 @@ end sumavg_dp;
 architecture s of sumavg_dp is
    constant MAX_VALUE                           : integer := 2147483647; -- maximum value for Q16.16
    constant MIN_VALUE                           : integer := -2147483648; -- minimum value for Q16.16
+	signal in_mem_addr                           : std_logic_vector(A_BITS-1 DOWNTO 0);
    signal R_X, in_R_X                           : std_logic_vector(A_BITS-1 DOWNTO 0);
    signal R_Y, in_R_Y                           : std_logic_vector(A_BITS-1 DOWNTO 0);
    signal R_D1, in_R_D1                         : std_logic_vector(W_BITS-1 DOWNTO 0);
@@ -150,6 +151,9 @@ architecture s of sumavg_dp is
          if load_L = '1' then
             L <= "000000000000000000000000" & len;
          end if;
+			if set_mem_addr = '1' then
+			   mem_addr <= in_mem_addr;
+         end if;
          if load_result = '1' then
             result <= in_result;
          end if;
@@ -157,6 +161,7 @@ architecture s of sumavg_dp is
    end process regs;
 
    -- muxes
+   in_mem_addr <= R_X when sel_mem_addr = '0' else R_Y when sel_mem_addr = '1' else (others => '-'); 
    in_R_X <= ptr1 when sel_R_X = '0' else std_logic_vector(unsigned(R_X) + 1);
    in_R_Y <= ptr2 when sel_R_Y = '0' else std_logic_vector(unsigned(R_Y) + 1);
    in_R_D1 <= mem_dataout when load_R_D1 = '1' else R_D1;
@@ -167,9 +172,8 @@ architecture s of sumavg_dp is
           else (others => '-');
 
    -- handle overflow
-   R_acc_carry <= '1' when R_acc > std_logic_vector(to_unsigned(MAX_VALUE, R_acc'length))
-                        --or R_acc < std_logic_vector(to_signed(MIN_VALUE, R_acc'length))
-                        else '0';   
+   R_acc_carry <= '1' when unsigned(R_acc) > to_unsigned(MAX_VALUE, R_acc'length)
+                        or signed(R_acc) < to_signed(MIN_VALUE, R_acc'length) else '0';   
    overflow <= R_acc_carry; -- assign the carry-out bit to the overflow signal
 
    -- status signals
@@ -196,10 +200,6 @@ architecture s of sumavg_dp is
          remainder => div_remainder,
          div => div_result
       );
-	
-  -- data outputs
-   mem_addr <= R_X when (set_mem_addr = '1' and sel_mem_addr = '0') else 
-               R_Y when (set_mem_addr = '1' and sel_mem_addr = '1'); 
 
    mem_datain <= (others => '-');
 
