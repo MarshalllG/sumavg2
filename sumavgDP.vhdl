@@ -103,7 +103,6 @@ end sumavg_dp;
 architecture s of sumavg_dp is
    constant MAX_VALUE                           : integer := 2147483647; -- maximum value for Q16.16
    constant MIN_VALUE                           : integer := -2147483648; -- minimum value for Q16.16
-	signal in_mem_addr                           : std_logic_vector(A_BITS-1 DOWNTO 0);
    signal R_X, in_R_X                           : std_logic_vector(A_BITS-1 DOWNTO 0);
    signal R_Y, in_R_Y                           : std_logic_vector(A_BITS-1 DOWNTO 0);
    signal R_D1, in_R_D1                         : std_logic_vector(W_BITS-1 DOWNTO 0);
@@ -116,6 +115,7 @@ architecture s of sumavg_dp is
    signal div_remainder                         : std_logic_vector(W_BITS-1 DOWNTO 0);
    signal div_result                            : std_logic_vector(W_BITS-1 DOWNTO 0);
    signal R_acc_carry                           : std_logic; -- to handle overflow
+   signal new_input                             : std_logic; -- to reset carry
 
    begin
    -- registers
@@ -151,17 +151,18 @@ architecture s of sumavg_dp is
          if load_L = '1' then
             L <= "000000000000000000000000" & len;
          end if;
-			if set_mem_addr = '1' then
-			   mem_addr <= in_mem_addr;
-         end if;
+
          if load_result = '1' then
             result <= in_result;
          end if;
       end if;
+      if new_input = '1' then
+         R_acc <= (others => '0');
+      end if;
    end process regs;
 
    -- muxes
-   in_mem_addr <= R_X when sel_mem_addr = '0' else R_Y when sel_mem_addr = '1' else (others => '-'); 
+   mem_addr <= R_X when sel_mem_addr = '0' else R_Y when sel_mem_addr = '1' else (others => '-'); 
    in_R_X <= ptr1 when sel_R_X = '0' else std_logic_vector(unsigned(R_X) + 1);
    in_R_Y <= ptr2 when sel_R_Y = '0' else std_logic_vector(unsigned(R_Y) + 1);
    in_R_D1 <= mem_dataout when load_R_D1 = '1' else R_D1;
@@ -172,6 +173,7 @@ architecture s of sumavg_dp is
           else (others => '-');
 
    -- handle overflow
+   new_input <= load_R_D1 or load_R_D2;
    R_acc_carry <= '1' when unsigned(R_acc) > to_unsigned(MAX_VALUE, R_acc'length)
                         or signed(R_acc) < to_signed(MIN_VALUE, R_acc'length) else '0';   
    overflow <= R_acc_carry; -- assign the carry-out bit to the overflow signal
